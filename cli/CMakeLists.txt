@@ -19,5 +19,5 @@ endif()
 add_executable(cli ${SOURCE_FILES})
 
 if (NOT APPLE)
-    target_link_libraries(cli -lhiredis -lgomp)
+    target_link_libraries(cli -lhiredis -fopenmp)
 endif()
