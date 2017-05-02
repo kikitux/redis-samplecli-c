@@ -4,7 +4,7 @@
 Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |v|
     v.memory = 1024
-    v.cpus = 2
+    v.cpus = 4
   end
   config.vm.box = "zesty"
   config.vm.box_url = "https://cloud-images.ubuntu.com/zesty/current/zesty-server-cloudimg-amd64-vagrant.box"
