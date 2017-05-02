@@ -2,9 +2,15 @@ cmake_minimum_required(VERSION 3.5)
 project(cli)
 
 set(CMAKE_C_STANDARD 11)
-
 set(SOURCE_FILES main.c)
 
+FIND_PACKAGE( OpenMP REQUIRED)
+if(OPENMP_FOUND)
+message("OPENMP FOUND")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+endif()
 
 if (APPLE)
     # brew instal hiredis
@@ -17,7 +23,4 @@ else()
 endif()
 
 add_executable(cli ${SOURCE_FILES})
-
-if (NOT APPLE)
-    target_link_libraries(cli -lhiredis -fopenmp)
-endif()
+target_link_libraries(cli -lhiredis)
