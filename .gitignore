@@ -1,0 +1,4 @@
+.vagrant/
+cli/.idea/
+cli/build/
+*.log
