@@ -34,12 +34,12 @@ int main(int argc, char **argv) {
     printf("SET: %s\n", reply->str);
     freeReplyObject(reply);
 
-    /* Try a GET and INCR */
+    /* Try a GET */
     reply = redisCommand(c,"GET foo");
     printf("GET foo: %s\n", reply->str);
     freeReplyObject(reply);
 
-    /* Create a list of numbers, from 0 to 9 */
+    /* Create a list of numbers, from 0 to 4 */
     reply = redisCommand(c,"DEL mylist");
     freeReplyObject(reply);
 
@@ -66,11 +66,6 @@ int main(int argc, char **argv) {
         printf("PING: %s\n", reply->str);
         freeReplyObject(reply);
 
-        /* increment */
-        reply = redisCommand(c,"INCR counter");
-        printf("INCR counter: %lld\n", reply->integer);
-        freeReplyObject(reply);
-
         /* unset lock */
         omp_unset_lock(&writelock);
 
@@ -78,11 +73,16 @@ int main(int argc, char **argv) {
         for (j = 0; j < 5; j++) {
             char buf[64];
 
-            snprintf(buf,64,"%u-%u",tid,5-j);
+            snprintf(buf,64,"t%u-%u",tid,4-j);
             /* set lock */
             omp_set_lock(&writelock);
 
             reply = redisCommand(c,"LPUSH mylist element-%s", buf);
+            freeReplyObject(reply);
+
+            /* increment */
+            reply = redisCommand(c,"INCR counter");
+            printf("INCR counter: %lld from thread: %d\n", reply->integer,tid);
             freeReplyObject(reply);
 
             /* unset lock */

@@ -4,6 +4,9 @@ exec 2>&1
 
 mkdir -p /vagrant/cli/build
 pushd /vagrant/cli/build
-cmake ..
-make
+if [ ${HOSTNAME} == "client1" ]; then
+  cmake ..
+  make clean
+  make
+fi
 time ./cli
