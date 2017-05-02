@@ -5,6 +5,8 @@
 #include <stdlib.h>
 //#include <string.h>
 
+#include <omp.h>
+
 #include <hiredis.h>
 
 int main(int argc, char **argv) {
@@ -36,10 +38,31 @@ int main(int argc, char **argv) {
     printf("SET: %s\n", reply->str);
     freeReplyObject(reply);
 
-    /* Try a GET and two INCR */
+    /* Try a GET and INCR */
     reply = redisCommand(c,"GET foo");
     printf("GET foo: %s\n", reply->str);
     freeReplyObject(reply);
+
+    // lets use OpenMP for Multi Thread
+    int nthreads, tid;
+
+    /* Fork a team of threads giving them their own copies of variables */
+    omp_set_num_threads(4);
+    #pragma omp parallel private(nthreads, tid)
+    {
+
+        /* Obtain thread number */
+        tid = omp_get_thread_num();
+        printf("Hello World from thread = %d\n", tid);
+
+        /* Only master thread does this */
+        if (tid == 0)
+        {
+            nthreads = omp_get_num_threads();
+            printf("Number of threads = %d\n", nthreads);
+        }
+
+    }  /* All threads join master thread and disband */
 
     reply = redisCommand(c,"INCR counter");
     printf("INCR counter: %lld\n", reply->integer);

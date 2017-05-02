@@ -1,4 +1,5 @@
 .vagrant/
 cli/.idea/
 cli/build/
+cli/cmake-build-debug/
 *.log

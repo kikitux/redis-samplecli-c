@@ -2,11 +2,13 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.provider "virtualbox"
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 1024
+    v.cpus = 2
+  end
   config.vm.box = "zesty"
   config.vm.box_url = "https://cloud-images.ubuntu.com/zesty/current/zesty-server-cloudimg-amd64-vagrant.box"
   config.vm.provision "shell", path: "scripts/global.sh"
-  config.vm.provider "virtualbox"
   config.vm.define "server" do |server|
     server.vm.provision "shell", path: "scripts/server.sh"
     server.vm.hostname = "server"
