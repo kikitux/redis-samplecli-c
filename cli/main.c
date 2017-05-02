@@ -46,20 +46,30 @@ int main(int argc, char **argv) {
     // lets use OpenMP for Multi Thread
     int nthreads, tid;
 
-    omp_lock_t writelock;
+    /* Fork a team of threads giving them their own copies of variables */
+    #pragma omp parallel private(tid)
+    {
+        /* Obtain thread number */
+        tid = omp_get_thread_num();
 
+        /* Only master thread does this */
+        if (tid == 0)
+        {
+            printf("Number of threads = %d\n", omp_get_num_threads());
+        }
+    }  /* All threads join master thread and disband */
+
+    omp_lock_t writelock;
     omp_init_lock(&writelock);
 
-    /* Fork a team of threads giving them their own copies of variables */
     #pragma omp parallel private(nthreads, tid)
     {
-
         /* Obtain thread number */
         tid = omp_get_thread_num();
 
         /* set lock */
         omp_set_lock(&writelock);
-        printf("Hello World from thread = %d\n", tid);
+        printf("Ping from thread = %d, ", tid);
 
         /* PING server */
         reply = redisCommand(c,"PING");
@@ -88,14 +98,6 @@ int main(int argc, char **argv) {
             /* unset lock */
             omp_unset_lock(&writelock);
         }
-
-        /* Only master thread does this */
-        if (tid == 0)
-        {
-            nthreads = omp_get_num_threads();
-            printf("Number of threads = %d\n", nthreads);
-        }
-
     }  /* All threads join master thread and disband */
 
     /* destroy the lock */
