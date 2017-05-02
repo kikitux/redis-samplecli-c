@@ -29,6 +29,7 @@ which redis-cli 2>/dev/null || {
 }
 
 [ -f /usr/include/hiredis/hiredis.h ] || {
+  export DEBIAN_FRONTEND=noninteractive
   [ ${update} == "false" ] && ( sudo apt-get update ; update=true )
   apt-get install -y libhiredis0.13 libhiredis-dev
 }
